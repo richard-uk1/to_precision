@@ -1,0 +1,9 @@
+[package]
+name = "to_precision"
+description = "Write out a float rounded to the given position."
+version = "0.1.0"
+authors = ["Richard Dodd <richard.o.dodd@gmail.com>"]
+edition = "2018"
+license = "MIT/Apache-2.0/ISC"
+repository = "https://github.com/derekdreery/to_precision"
+keywords = ["floating", "point", "precision", "significant", "figure"]
