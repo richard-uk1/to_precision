@@ -52,9 +52,20 @@ impl fmt::Display for F64Display {
 
 /// Round the number to the given significant figures.
 fn to_sig_figs(x: f64, sf: i32) -> f64 {
+    println!("to_sig_figs({}, {})", x, sf);
     let e = ten_power_leq(x);
-    let tens = (10.0f64).powi(e - sf + 1);
-    (x / tens).round() * tens
+    println!("e = {}", e);
+    // two branches depending on the sign of e - sf + 1
+    // We need this to combat fp error: although e.g. 0.1 is representable in fp, we won't get that
+    // answer when doing 10000 * 0.000001.
+    let p = e - sf + 1;
+    if p < 0 {
+        let tens = (10.0f64).powi(-p);
+        (x * tens).round() / tens
+    } else {
+        let tens = (10.0f64).powi(p);
+        (x / tens).round() * tens
+    }
 }
 
 /// Return integer e such that `10^e <= x < 10^(e+1)`
@@ -117,16 +128,18 @@ mod tests {
 
     #[test]
     fn it_works() {
-        for (input, expected) in vec![
-            (f64::NAN, "NaN"),
-            (f64::INFINITY, "∞"),
-            (f64::NEG_INFINITY, "-∞"),
-            (0., "0"),
-            (-0., "0"),
-            (0.999, "0.999"),
-            (0.9999, "1"),
+        for (input, sf, expected) in vec![
+            (f64::NAN, 3, "NaN"),
+            (f64::INFINITY, 3, "∞"),
+            (f64::NEG_INFINITY, 3, "-∞"),
+            (0., 3, "0"),
+            (-0., 3, "0"),
+            (0.999, 3, "0.999"),
+            (0.9999, 3, "1"),
+            (0.7000000000000002, 5, "0.7"),
+            (f64::from_bits(4603579539098121012), 4, "0.6"),
         ] {
-            assert_eq!(input.to_precision(3).to_string(), expected);
+            assert_eq!(input.to_precision(sf).to_string(), expected);
         }
     }
 }
