@@ -1,6 +1,6 @@
-//! A function that works like javascript's `toPreceision`.
+//! A function that works like javascript's `toPrecision`.
 //!
-//! Internally it rounds and then uses the build-in algorithm, so it will give different results to
+//! Internally it rounds and then uses the built-in algorithm, so it will give different results to
 //! `toPrecision`. They may converge over time.
 use std::fmt;
 
@@ -52,9 +52,10 @@ impl fmt::Display for F64Display {
 
 /// Round the number to the given significant figures.
 fn to_sig_figs(x: f64, sf: i32) -> f64 {
-    println!("to_sig_figs({}, {})", x, sf);
+    // println!("to_sig_figs({}, {})", x, sf); // DEBUG
     let e = ten_power_leq(x);
-    println!("e = {}", e);
+    // println!("e = {}", e); // DEBUG
+    
     // two branches depending on the sign of e - sf + 1
     // We need this to combat fp error: although e.g. 0.1 is representable in fp, we won't get that
     // answer when doing 10000 * 0.000001.
